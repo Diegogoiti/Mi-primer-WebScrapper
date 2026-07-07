@@ -1,3 +1,5 @@
+import json
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -26,26 +28,50 @@ def parsear_proyectos(soup):
     if not soup:
         return
 
-    # TODO: Aquí meteremos la clase real cuando inspecciones la página
-    # Por ahora usamos un placeholder para que el código no rompa
-    clase_proyecto = "project-item"
-    proyectos = soup.find_all("div", class_=clase_proyecto)
+    # 1. Buscamos la etiqueta de Vue
+    search_tag = soup.find("search")
+    if not search_tag:
+        print("[-] No se encontró la etiqueta <search> en la página.")
+        return
+
+    # 2. Extraemos el atributo de texto y lo convertimos a un diccionario de Python
+    data_json = json.loads(search_tag[":results-initials"])
+
+    # 3. Accedemos a la lista de proyectos dentro de la clave "results"
+    proyectos = data_json.get("results", [])
 
     print(f"[+] Se encontraron {len(proyectos)} bloques de proyectos en la página.\n")
 
     for proyecto in proyectos:
-        # Aquí irá la lógica para extraer títulos y habilidades
-        pass
+        titulo_sucio = proyecto.get("title", "Sin título")
+
+        # Pasamos el string HTML por BeautifulSoup para extraer solo el texto limpio
+        titulo_limpio = BeautifulSoup(titulo_sucio, "html.parser").get_text()
+
+        print(titulo_limpio)
+
+        skills_data = proyecto.get("skills", [])
+
+        # Extraemos el 'anchorText' de cada elemento de la lista
+        habilidades = [skill.get("anchorText") for skill in skills_data]
+
+        # Las unimos en un solo string bonito
+        habilidades_str = ", ".join(habilidades)
+
+        print(f"Habilidades: {habilidades}")
+        print("-" * 40)
 
 
 def main():
     print("[*] Iniciando el scraper de Workana...")
 
     # URL de la sección de Programación y Tecnología
-    url_objetivo = "https://www.workana.com/jobs?category=it-programming"
+    url_objetivo = "https://www.workana.com/jobs?category=it-programming&language=xx"
 
     soup = obtener_html(url_objetivo)
     parsear_proyectos(soup)
+
+    # print(soup)
 
 
 if __name__ == "__main__":
