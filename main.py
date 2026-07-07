@@ -126,7 +126,7 @@ def main():
     # mi_scrapper.parsear_proyectos()
     # mi_scrapper.cargar_habilidades()
 
-    i = 51
+    i = 1
     while True:
         url = f"https://www.workana.com/jobs?category=it-programming&language=en%2Ces&page={i}"
         print(f"[*] Procesando página {i}...")
