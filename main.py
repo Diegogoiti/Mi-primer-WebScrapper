@@ -128,7 +128,7 @@ def main():
 
     i = 1
     while True:
-        url = f"https://www.workana.com/jobs?category=it-programming&language=en%2Ces&page={i}"
+        url = f"https://www.workana.com/jobs?category=it-programming&page={i}"
         print(f"[*] Procesando página {i}...")
         if not mi_scrapper.procesar_pagina(url):
             print("[!] No se encontraron más proyectos. Terminando... ")
